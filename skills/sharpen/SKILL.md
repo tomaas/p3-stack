@@ -1,6 +1,6 @@
 ---
 name: sharpen
-description: "Make a task deeper, not bigger, then rewrite the prompt. Returns only the rewritten prompt and doesn't do the task. Use for /sharpen."
+description: "Make a task deeper, not bigger, then rewrite the prompt. Hands back the rewritten prompt and doesn't do the task. Use for /sharpen."
 disable-model-invocation: true
 ---
 

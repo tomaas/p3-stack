@@ -9,25 +9,42 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 problems=0
 checked=0
 
-for file in "$ROOT"/skills/*/SKILL.md; do
-  folder="$(basename "$(dirname "$file")")"
+problem() {
+  printf '%s\n' "$1"
+  problems=$((problems + 1))
+}
+
+for dir in "$ROOT"/skills/*/; do
+  folder="$(basename "$dir")"
+  file="${dir}SKILL.md"
   checked=$((checked + 1))
 
-  name="$(awk '
-    NR == 1 && $0 != "---" { exit }
-    NR > 1 && $0 == "---" { exit }
-    NR > 1 && /^name:/ { sub(/^name:[ \t]*/, ""); sub(/[ \t]+$/, ""); print; exit }
-  ' "$file")"
-  name="${name#[\"\']}"
-  name="${name%[\"\']}"
-
-  if [[ "$name" != "$folder" ]]; then
-    printf 'skills/%s/SKILL.md has name "%s", not its folder name %s\n' "$folder" "$name" "$folder"
-    problems=$((problems + 1))
-  fi
   if [[ ! "$folder" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ || ${#folder} -gt 64 ]]; then
-    printf 'skills/%s is not lowercase words joined by hyphens, at most 64 characters\n' "$folder"
-    problems=$((problems + 1))
+    problem "skills/$folder is not lowercase words joined by hyphens, at most 64 characters"
+  fi
+  if [[ ! -f "$file" ]]; then
+    problem "skills/$folder has no SKILL.md"
+    continue
+  fi
+
+  # Prints "closed<TAB>name" when the frontmatter closes, "open<TAB>name" otherwise.
+  read -r fence name < <(awk '
+    { sub(/\r$/, "") }
+    NR == 1 { sub(/^\xef\xbb\xbf/, ""); if ($0 != "---") exit; next }
+    $0 == "---" { closed = 1; exit }
+    !found && /^name:/ { sub(/^name:[ \t]*/, ""); sub(/[ \t]+$/, ""); name = $0; found = 1 }
+    END { printf "%s\t%s\n", (closed ? "closed" : "open"), name }
+  ' "$file") || true
+
+  if [[ "$fence" != "closed" ]]; then
+    problem "skills/$folder/SKILL.md has no frontmatter closed by ---"
+    continue
+  fi
+  if [[ "$name" =~ ^\"(.*)\"$ || "$name" =~ ^\'(.*)\'$ ]]; then
+    name="${BASH_REMATCH[1]}"
+  fi
+  if [[ "$name" != "$folder" ]]; then
+    problem "skills/$folder/SKILL.md has name \"$name\", not its folder name $folder"
   fi
 done
 

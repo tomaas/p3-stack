@@ -12,7 +12,7 @@ Use [`/bro`](../bro/SKILL.md)'s voice, not its task: plain words, short sentence
 
 ## Gather what changed
 
-Keep this turn read-only. Make visuals only from what you already have: do not change code, start an app or a job, or post anything. Collect your own work since that message, results from delegated tasks, and messages from anyone else in this thread. Check the current state of each PR, CI run, or delegated task this thread touched: `list_thread_pull_requests` for the PRs, `task_status` for the tasks. Check each number you will show against the facts it comes from, and say so when you correct one.
+Keep this turn read-only. Make visuals only from what you already have: do not change code, start an app or a job, or post anything. Collect your own work since that message, results from delegated tasks, and messages from anyone else in this thread. Check the current state of each PR, CI run, delegated task, or launched thread this thread touched: `list_thread_pull_requests` for the PRs, `task_status` for the tasks, `t3_thread_read` for the threads. Check each number you will show against the facts it comes from, and say so when you correct one.
 
 An action item is a call or step only the user can take, such as a product choice, an approval, an irreversible action, or access you lack. Include any still waiting on the user, even one raised before their last message. Work you can still do yourself is not an action item. Never make up a call to fill the reply. A step the user did not ask for and the work does not need is not an action item, unless it is irreversible and waiting on the user: give it one line and no visual.
 
@@ -34,7 +34,7 @@ For a call between options, give every option the work weighed, each with what i
 
 ## Visuals
 
-A visual is a picture: a screenshot or recording from `preview_*` or `device_*`, a Mermaid diagram, a chart published with `html_render`, or a generated image. A Markdown table is not a visual, even with before and after columns.
+A visual is a picture: a screenshot from `preview_*` or `device_*`, a recording from `preview_recording_*`, a Mermaid diagram, a chart published with `html_render`, or a generated image. A Markdown table is not a visual, even with before and after columns.
 
 When something is easier to grasp as a picture than as sentences, draw it: how a design or system works, a PR stack or dependency chain with each PR's state, a before and after of a fix, or options side by side. Never draw a status list, a list of action items, or boxes with nothing connecting them. Never give a fact twice, in text or across visuals.
 
