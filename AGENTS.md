@@ -61,10 +61,11 @@ Keep these names exactly.
 - Queue: `t3_queue_list`, `t3_queue_read`, `t3_queue_edit`, `t3_queue_reorder`, `t3_queue_cancel`, `t3_queue_promote_to_steer`
 - Preview: `preview_open`, `preview_navigate`, `preview_snapshot`, `preview_click`, `preview_type`, `preview_press`, `preview_scroll`, `preview_wait_for`, `preview_status`, `preview_resize`, `preview_set_appearance`, `preview_recording_start`, `preview_recording_stop`, `t3_preview_list`, `t3_preview_close`
 - Devices: `device_list`, `device_open`, `device_screenshot`, `device_close`
+- Visuals: `html_preview`, `html_render`
 - Pending requests: `t3_pending_request_list`, `t3_pending_request_read`, `t3_pending_request_respond`
 
 ## Definition of done for a skill
 
 1. Every step names a T3 mechanism or a vendor-neutral habit. Grep for `Cursor`, `Task tool`, `subagent_type`, `cloud agent`, `.cursor`, `agent-transcripts`, `AskQuestion`, `icon:`, `claude-`, `grok-`, `gpt-`, `/loop`. None may remain.
 2. It is shorter than the pstack source unless the T3 rewrite genuinely needs the lines.
-3. Frontmatter matches the rules above, and references to other skills resolve to files in this repo.
+3. Frontmatter matches the rules above, `name` equals the folder name (`scripts/check-skill-names.sh` passes), and references to other skills resolve to files in this repo.
