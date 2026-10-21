@@ -1,0 +1,7 @@
+p3-stack
+Copyright (c) 2026 Uzair Ansar (T3 Code adaptation)
+
+This product adapts pstack from https://github.com/cursor/plugins/tree/main/pstack,
+by Lauren Tan (poteto), licensed under the MIT License.
+Last synced with upstream cursor/plugins pstack at commit
+88d47514b82e7c44f00f2b2a72ff6dd12158038c (pstack 0.15.29).
