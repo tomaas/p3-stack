@@ -67,4 +67,4 @@ Keep these names exactly.
 
 1. Every step names a T3 mechanism or a vendor-neutral habit. Grep for `Cursor`, `Task tool`, `subagent_type`, `cloud agent`, `.cursor`, `agent-transcripts`, `AskQuestion`, `icon:`, `claude-`, `grok-`, `gpt-`, `/loop`. None may remain.
 2. It is shorter than the pstack source unless the T3 rewrite genuinely needs the lines.
-3. Frontmatter matches the rules above, and references to other skills resolve to files in this repo.
+3. Frontmatter matches the rules above, `name` equals the folder name (`scripts/check-skill-names.sh` passes), and references to other skills resolve to files in this repo.
