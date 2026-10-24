@@ -33,7 +33,7 @@ cd p3-stack
 
 ## Skills
 
-architect, arena, automate-me, benchmark-checklist, blast-radius, bro, correct, create-verification-skill, figure-it-out, how, interrogate, ketchup, maintain-verification-skill, make-bot-ui, no-comments, p3-help, recall, reflect, setup-p3, sharpen, show-me-your-work, swarm, tdd, teach, technical-writing, typescript-best-practices, unslop, why.
+architect, arena, automate-me, benchmark-checklist, blast-radius, bro, correct, create-verification-skill, figure-it-out, how, interrogate, ketchup, ketchup-video, maintain-verification-skill, make-bot-ui, no-comments, p3-help, recall, reflect, setup-p3, sharpen, show-me-your-work, statechart, swarm, tdd, teach, technical-writing, typescript-best-practices, unslop, why.
 
 ## Principles
 
@@ -41,4 +41,4 @@ The twenty-four principle skills are indexed inside `p3-mode` and referenced by 
 
 ## Credit
 
-p3-stack adapts [pstack](https://github.com/cursor/plugins/tree/main/pstack) by [poteto](https://x.com/poteto). The skills, principles, and language are hers; the T3 Code rewiring is this repo's, started by Uzair Ansar. Synced with upstream [cursor/plugins](https://github.com/cursor/plugins) pstack at [`88d4751`](https://github.com/cursor/plugins/tree/88d47514b82e7c44f00f2b2a72ff6dd12158038c/pstack) (0.15.29) by Lauren Tan (poteto). MIT, see [LICENSE](LICENSE) and [NOTICE](NOTICE). Changes per sync are in [CHANGELOG.md](CHANGELOG.md).
+p3-stack adapts [pstack](https://github.com/cursor/plugins/tree/main/pstack) by [poteto](https://x.com/poteto). The skills, principles, and language are hers; the T3 Code rewiring is this repo's, started by Uzair Ansar. Synced with upstream [cursor/plugins](https://github.com/cursor/plugins) pstack at [`9580c23`](https://github.com/cursor/plugins/tree/9580c23696ac8d7abed0c166f2f9918800afb819/pstack) (0.15.32) by Lauren Tan (poteto). MIT, see [LICENSE](LICENSE) and [NOTICE](NOTICE). Changes per sync are in [CHANGELOG.md](CHANGELOG.md).

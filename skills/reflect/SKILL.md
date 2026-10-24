@@ -48,6 +48,8 @@ Before applying any Accepted edit, present the synthesizer's full Accepted/Rejec
 
 Backlog items file to whatever devex / backlog tracker your team uses automatically. Only the Accepted list waits for approval.
 
+Never edit a skill through its symlink into the p3-stack checkout. `install.sh` links each skill there, so an edit lands in the checkout and blocks the next pull. Before approval, show its destination, `.agents/skills/<skill>/` or `~/.agents/skills/<skill>/`. After approval, replace the symlink with a copy of the skill folder and edit the copy. `install.sh` skips a folder that is not a symlink, so the copy survives reinstalls. Never open a PR or push.
+
 For each approved Accepted item, follow the Routing field exactly:
 
 - Trivial existing-skill edit (a one-line bullet, a tightened sentence, a stale fact corrected): parent does directly.
