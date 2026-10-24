@@ -10,6 +10,7 @@ Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `9580c23
 - **`/swarm` report wording** ([#807](https://github.com/cursor/plugins/pull/807)). Phase D names "a result table" instead of "the table". The step renumbering in #807 was already right here, because p3-stack kept the "Set N" step that upstream had dropped.
 - `/p3-help` routes to `/ketchup-video` and `/statechart`. The README lists both and credits the new upstream commit. `NOTICE` names the new commit.
 - `/reflect` spells out a safe symlink-to-copy procedure (`readlink -f`, copy to a temp folder, `rm` the link with no trailing slash, `mv`, `test ! -L`), keeps project copies out of commits, and tells the user a copied skill is detached from `git pull` and how to restore it (DEV-1181 review follow-up).
+- `/reflect` copy steps take a `<dest>` placeholder for the global or project path, cover a project with no copy yet (copy from the global link, which stays), use `mktemp -d` instead of a fixed temp path, refuse to `mv` onto an existing path, and verify `test -d`, `test ! -L` and `SKILL.md` before editing (DEV-1181 second review follow-up).
 
 Not ported, because p3-stack has no counterpart:
 
