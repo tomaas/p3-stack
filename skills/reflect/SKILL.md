@@ -50,15 +50,21 @@ Backlog items file to whatever devex / backlog tracker your team uses automatica
 
 Never edit a skill through its symlink into the p3-stack checkout. `install.sh` links each skill there, so an edit lands in the shared checkout, mixed in with upstream's files and read by every project that uses the install. Before approval, show its destination, `.agents/skills/<skill>` in the project or `~/.agents/skills/<skill>`, and say the copy will be detached: it stops updating on `git pull` (`install.sh` prints `skip <skill>` for it), and deleting the copy and rerunning `install.sh` restores the linked skill.
 
-After approval, if the destination is a symlink, replace it with a copy, using the project path in place of `~/.agents/skills/<skill>` when that is the destination. `rm -r` on the path with a trailing slash deletes files inside the checkout, and plain `cp -r` of the link copies the link, so copy from the real folder.
+After approval, `<dest>` is `~/.agents/skills/<skill>` or the project's `.agents/skills/<skill>`, written with no trailing slash. `rm -r` on a link with a trailing slash deletes files inside the checkout, and `cp -r` of a link copies the link. Never `cp -r` the link itself: copy from the real folder. Pick the case by what `<dest>` is now:
 
-1. `readlink -f ~/.agents/skills/<skill>` prints the real folder.
-2. `mkdir /tmp/<skill>-copy && cp -R <real folder>/. /tmp/<skill>-copy/` copies its contents.
-3. `rm ~/.agents/skills/<skill>` removes the link. Never `-r`, never a trailing slash.
-4. `mv /tmp/<skill>-copy ~/.agents/skills/<skill>` moves the copy into place.
-5. `test ! -L ~/.agents/skills/<skill>` must succeed before you edit.
+- A symlink: run steps 1 to 5, with `<link>` = `<dest>`.
+- Missing, because the skill is only installed globally: run steps 1, 2, 4 and 5, with `<link>` = `~/.agents/skills/<skill>`. Skip step 3, so the global link stays. Create the project's `.agents/skills` folder first if it does not exist.
+- A plain folder: there is nothing to replace. Edit it in place.
 
-A project's `.agents/skills/<skill>` may be a plain folder with no symlink. Then there is nothing to replace: edit it in place. Either way, a copy under a project's `.agents/skills/` lives in the user's repo. Never stage or commit it unless the user asks. Never open a PR or push.
+1. `readlink -f <link>` prints the real folder.
+2. `tmp=$(mktemp -d) && cp -R <real folder>/. "$tmp"/` copies its contents into a fresh temp folder.
+3. `rm <dest>` removes the link. Never `-r`, never a trailing slash.
+4. `test ! -e <dest> && mv "$tmp" <dest>` moves the copy into place.
+5. `test -d <dest> && test ! -L <dest> && test -f <dest>/SKILL.md` must succeed before you edit.
+
+Run steps 2 to 5 as one shell command joined with `&&`, so `$tmp` stays set and a failed step stops the rest. If a step fails, stop and tell the user. Never delete or recreate a folder to make a step pass.
+
+A copy under a project's `.agents/skills/` lives in the user's repo. Never stage or commit it unless the user asks. Never open a PR or push.
 
 For each approved Accepted item, follow the Routing field exactly:
 
