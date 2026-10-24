@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-10-24: sync with pstack 0.15.32
+
+Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `9580c23` (0.15.32), by Lauren Tan (poteto), MIT.
+
+- **New `/statechart`** ([#741](https://github.com/cursor/plugins/pull/741), [#776](https://github.com/cursor/plugins/pull/776), [#779](https://github.com/cursor/plugins/pull/779), [#791](https://github.com/cursor/plugins/pull/791)). Draws how a system moves between states as a Mermaid statechart generated from a TLA+ model, with each bug TLC finds as a numbered path. Also turns an agreed chart into a TLA+ skeleton, or audits code against an existing spec. The skill and its `scripts/` are upstream's at 0.15.32, unchanged: nothing in them is Cursor-specific.
+- **New `/ketchup-video`** ([#797](https://github.com/cursor/plugins/pull/797)). `/ketchup` as a short silent video of slides, with the waiting calls as text under it. T3 wiring: "chat" becomes "thread", and the video is embedded in the thread by its absolute path.
+- **`/reflect` keeps edits out of the installed checkout** ([#800](https://github.com/cursor/plugins/pull/800)). Upstream forbids editing skills under `plugins/cache/`. Here the equivalent is the p3-stack checkout that `install.sh` symlinks into `~/.agents/skills/`: reflect replaces the symlink with a copy and edits the copy, which `install.sh` then leaves alone. Never opens a PR or pushes.
+- **`/swarm` report wording** ([#807](https://github.com/cursor/plugins/pull/807)). Phase D names "a result table" instead of "the table". The step renumbering in #807 was already right here, because p3-stack kept the "Set N" step that upstream had dropped.
+- `/p3-help` routes to `/ketchup-video` and `/statechart`. The README lists both and credits the new upstream commit. `NOTICE` names the new commit.
+
+Not ported, because p3-stack has no counterpart:
+
+- Version bumps to 0.15.31 and 0.15.32 ([#792](https://github.com/cursor/plugins/pull/792), [#798](https://github.com/cursor/plugins/pull/798)): no `plugin.json`.
+- `watch-pr` fixes ([#801](https://github.com/cursor/plugins/pull/801), [#802](https://github.com/cursor/plugins/pull/802)): `watch_pull_request` replaces `scripts/watch-pr`.
+- `check-plan.mjs` ([#803](https://github.com/cursor/plugins/pull/803)), `orch` ([#804](https://github.com/cursor/plugins/pull/804)), `worktree-audit.sh` ([#805](https://github.com/cursor/plugins/pull/805)): p3-mode ships no scripts. Delegation and worktrees go through T3 tools.
+- Claude Code marketplace auto-update note ([#806](https://github.com/cursor/plugins/pull/806)): install is a symlink from a git clone. `git pull` updates it.
+- `create-formal-verification-skill` pointer to `/statechart` ([#794](https://github.com/cursor/plugins/pull/794)): that skill is not ported yet. Carry the line over when it is.
+- `docs/guide` sections for `/statechart` and `/ketchup-video` (#741, #797): p3-stack has no guide.
+
+### Follow-up
+
+Still not ported:
+
+- `create-formal-verification-skill` (with #794)
+- `maintain-formal-verification-skill`
+- `in-your-own-words`
+
 ## 2026-10-21: sync with pstack 0.15.29
 
 Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `88d4751` (0.15.29), by Lauren Tan (poteto), MIT.
