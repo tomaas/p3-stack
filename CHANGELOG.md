@@ -9,6 +9,7 @@ Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `9580c23
 - **`/reflect` keeps edits out of the installed checkout** ([#800](https://github.com/cursor/plugins/pull/800)). Upstream forbids editing skills under `plugins/cache/`. Here the equivalent is the p3-stack checkout that `install.sh` symlinks into `~/.agents/skills/`: reflect replaces the symlink with a copy and edits the copy, which `install.sh` then leaves alone. Never opens a PR or pushes.
 - **`/swarm` report wording** ([#807](https://github.com/cursor/plugins/pull/807)). Phase D names "a result table" instead of "the table". The step renumbering in #807 was already right here, because p3-stack kept the "Set N" step that upstream had dropped.
 - `/p3-help` routes to `/ketchup-video` and `/statechart`. The README lists both and credits the new upstream commit. `NOTICE` names the new commit.
+- `/reflect` spells out a safe symlink-to-copy procedure (`readlink -f`, copy to a temp folder, `rm` the link with no trailing slash, `mv`, `test ! -L`), keeps project copies out of commits, and tells the user a copied skill is detached from `git pull` and how to restore it (DEV-1181 review follow-up).
 
 Not ported, because p3-stack has no counterpart:
 

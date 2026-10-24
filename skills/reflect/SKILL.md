@@ -48,7 +48,17 @@ Before applying any Accepted edit, present the synthesizer's full Accepted/Rejec
 
 Backlog items file to whatever devex / backlog tracker your team uses automatically. Only the Accepted list waits for approval.
 
-Never edit a skill through its symlink into the p3-stack checkout. `install.sh` links each skill there, so an edit lands in the checkout and blocks the next pull. Before approval, show its destination, `.agents/skills/<skill>/` or `~/.agents/skills/<skill>/`. After approval, replace the symlink with a copy of the skill folder and edit the copy. `install.sh` skips a folder that is not a symlink, so the copy survives reinstalls. Never open a PR or push.
+Never edit a skill through its symlink into the p3-stack checkout. `install.sh` links each skill there, so an edit lands in the shared checkout, mixed in with upstream's files and read by every project that uses the install. Before approval, show its destination, `.agents/skills/<skill>` in the project or `~/.agents/skills/<skill>`, and say the copy will be detached: it stops updating on `git pull` (`install.sh` prints `skip <skill>` for it), and deleting the copy and rerunning `install.sh` restores the linked skill.
+
+After approval, if the destination is a symlink, replace it with a copy, using the project path in place of `~/.agents/skills/<skill>` when that is the destination. `rm -r` on the path with a trailing slash deletes files inside the checkout, and plain `cp -r` of the link copies the link, so copy from the real folder.
+
+1. `readlink -f ~/.agents/skills/<skill>` prints the real folder.
+2. `mkdir /tmp/<skill>-copy && cp -R <real folder>/. /tmp/<skill>-copy/` copies its contents.
+3. `rm ~/.agents/skills/<skill>` removes the link. Never `-r`, never a trailing slash.
+4. `mv /tmp/<skill>-copy ~/.agents/skills/<skill>` moves the copy into place.
+5. `test ! -L ~/.agents/skills/<skill>` must succeed before you edit.
+
+A project's `.agents/skills/<skill>` may be a plain folder with no symlink. Then there is nothing to replace: edit it in place. Either way, a copy under a project's `.agents/skills/` lives in the user's repo. Never stage or commit it unless the user asks. Never open a PR or push.
 
 For each approved Accepted item, follow the Routing field exactly:
 
@@ -63,7 +73,7 @@ If your environment ships a SKILL.md validator, run it on every touched skill be
 
 Short list, no preamble:
 
-- Edits applied: `<skill path>`. What changed, one line each.
+- Edits applied: `<skill path>`. What changed, one line each. For a skill copied out of the p3-stack checkout, say it is detached: it no longer updates on `git pull` (`install.sh` prints `skip <skill>`), and deleting the copy and rerunning `install.sh` restores it.
 - New skills created: `<skill path>`. One line each (rare).
 - Backlog filed to the devex tracker: `<issue title>` (`<tags>`). One line each.
 - Dropped: one line per rejected finding + reason from the synthesizer.
