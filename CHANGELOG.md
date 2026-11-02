@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-11-02: sync with pstack 0.15.36
+
+Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `c742dd6` (0.15.36), by Lauren Tan (poteto), MIT.
+
+- **`/statechart` is now a compiler** ([#977](https://github.com/cursor/plugins/pull/977)). One command, `scripts/statechart SPEC.tla`, checks a TLA+ model with TLC, draws the Mermaid statechart, and reports the shortest path to each rule that breaks. A POSIX launcher runs the TypeScript on Node 22.18+, Bun 1.1.5+ or Deno 2.0+, with no build step. The chart-to-TLA+ skeleton and the audit against an existing spec are gone, as upstream. The skill and its `scripts/` are upstream's at 0.15.36, with two T3 changes: `references/render.md` embeds the SVG in the thread by its absolute path, and the private `package.json` is named `@p3-stack/statechart`.
+- **Qualified action names in property traces** ([#982](https://github.com/cursor/plugins/pull/982)). An INSTANCE action such as `C!Up` keeps its full name in traces, so a PROPERTY that it breaks gets its bug path. Comes in with the upstream scripts.
+- **SIGKILL view test waits for the reap** ([#981](https://github.com/cursor/plugins/pull/981)). Test-only fix for macOS. Comes in with the upstream scripts.
+- **Recent skill updates** ([#986](https://github.com/cursor/plugins/pull/986)):
+  - `/p3-mode` restates the user's goal in the first message, each delegate brief, each PR's `## Why`, and each final report. A steer or follow-up to a running worker is async too. A rejected model falls back through the calling skill's fallback, then the closest model of the same provider, then the parent model, and the agent says so. Explain the Number applies before you measure.
+  - Autopilot-full blocks a PR only for a problem a run or a wrong doc line shows, pushes each finished unit before the next, rebases when a known concurrent change to the same files lands, and gives a wording-only push no verifier. Its reply lists parked follow-ups.
+  - Autopilot-stack is now Autopilot-full without the merge. A PR stacks only on a PR it builds on. The STACK-READY state, the root-owned topology, and the "choosing between the autopilots" rule are gone. The multi-phase plan, babysit and opening-a-PR playbooks follow, and a PR-opening worker no longer runs `/interrogate`.
+  - Autonomous run owns only mid-run discoveries that support the goal.
+  - `/interrogate`: adversaries prove each finding with a run, and the lead keeps only findings that a rerun confirms. Its `references/` (reviewer prompt, rubric, code-quality lens, lead judgment) are deleted. Upstream's pointer to the `in-your-own-words` skill is inlined, because p3-stack has no such skill yet.
+  - `/arena` drops or replaces a rejected runner seat. Its cross-judge never comes from the parent's provider, and Arena skips the judge when no other provider runs. `/setup-p3` describes the pool the same way.
+  - `/ketchup-video` subtitles each slide and measures holds from the rendered file.
+  - `principle-explain-the-number`: write the decision before you run.
+- **Agent-run Orchestrate** ([#1043](https://github.com/cursor/plugins/pull/1043)). The Orchestrate playbook runs the program with the coordinator's own tools: `delegate_task` workers, one owner per PR, a verifier from another model family, `watch_pull_request` with an hourly `schedule_task` fallback, and state kept in plain files and linked PRs. The store layout, brief template, inbox drain, frontier and ledger machinery are gone. p3-stack never shipped upstream's `orch` scripts, and no consumer calls them, so no script is deleted here.
+- `/reflect` copy steps (DEV-1181 review nits, deferred from #4): `chmod 755` after `mktemp -d`, so the copy is not left readable only by its owner. Clearer wording on which steps run as one command for each case. A recovery note for when step 4 fails after the link is gone. Paths are quoted.
+- `/p3-help`, the README and `NOTICE` match: the new `/statechart`, `/interrogate` and `/ketchup-video` wording, "autopilot, don't merge" for Autopilot-stack, and the upstream commit `c742dd6`.
+
+Not ported, because p3-stack has no counterpart:
+
+- Version bumps to 0.15.33 through 0.15.36 ([#978](https://github.com/cursor/plugins/pull/978), [#983](https://github.com/cursor/plugins/pull/983), and the bumps inside #986 and #1043): no `plugin.json`.
+- `orch` script deletion and the `poteto-mode/scripts/package.json` test entry (#1043): never ported (see the 2026-10-24 entry).
+- `create-formal-verification-skill` wording on `/statechart` (#977): that skill is not ported yet.
+- `docs/guide` changes (#977, #986, #1043) and the CI move to Node 22 (#977): p3-stack has no guide and no CI.
+- `poteto-help/references/recipes.md` wording (#986): p3-help has no recipes file.
+
 ## 2026-10-24: sync with pstack 0.15.32
 
 Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `9580c23` (0.15.32), by Lauren Tan (poteto), MIT.
