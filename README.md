@@ -33,7 +33,7 @@ cd p3-stack
 
 ## Skills
 
-architect, arena, automate-me, benchmark-checklist, blast-radius, bro, correct, create-verification-skill, figure-it-out, how, interrogate, ketchup, ketchup-video, maintain-verification-skill, make-bot-ui, no-comments, p3-help, recall, reflect, setup-p3, sharpen, show-me-your-work, statechart, swarm, tdd, teach, technical-writing, typescript-best-practices, unslop, why.
+architect, arena, automate-me, benchmark-checklist, blast-radius, bro, correct, create-formal-verification-skill, create-verification-skill, figure-it-out, how, interrogate, ketchup, ketchup-video, maintain-formal-verification-skill, maintain-verification-skill, make-bot-ui, no-comments, p3-help, recall, reflect, setup-p3, sharpen, show-me-your-work, statechart, swarm, tdd, teach, technical-writing, typescript-best-practices, unslop, why.
 
 ## Principles
 

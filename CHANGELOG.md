@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-11-05: formal verification skills (pstack 0.15.36)
+
+Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `c742dd6` (0.15.36), by Lauren Tan (poteto), MIT. Ports the pair listed under "Not ported" on 2026-10-24 and 2026-11-02 (DEV-1542).
+
+- **New `/create-formal-verification-skill`**. Finds the code where a bug costs the most and tests reach the least, verifies one property of it with the tool that fits (TLA+ by default for ordering and races), shows each property failing on a broken variant, and leaves a project-local verify skill with a coverage record and a sync commit. Carries the `/statechart` wording from [#794](https://github.com/cursor/plugins/pull/794) and [#977](https://github.com/cursor/plugins/pull/977): a TLA+ result is read with `/statechart`, by name, with none of its commands copied. T3 wiring: the generated skill goes in `.agents/skills/`, questions go plainly in the thread, and the pointer names p3-stack's `/statechart`.
+- **New `/maintain-formal-verification-skill`**. The upkeep loop: reads every commit that touched verified code since the sync commit, updates the model or harness from the code, reruns, and calls each failure drift or a bug. Upstream's text, with one T3 change: verify skills are looked for under `.agents/skills/`.
+- **`/setup-p3` step 8** offers once to generate a formal verification skill when the project has none, as upstream's `setup-pstack`. The "resolves wherever pstack is installed" aside is dropped, as in step 7.
+- `/statechart` needs no change: its `SKILL.md` already matches upstream at `c742dd6`, and the #977 wording that depended on the new skills lives in `create-formal-verification-skill`.
+- The README lists both skills.
+
+Not ported, because p3-stack has no counterpart or it is out of scope here:
+
+- `docs/guide` and `poteto-help/references/recipes.md` mentions of the two skills: p3-stack has no guide and no recipes file.
+- `poteto-help` routing rows and state hint for the two skills: `/p3-help` is left for a follow-up.
+
 ## 2026-11-02: sync with pstack 0.15.36
 
 Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `c742dd6` (0.15.36), by Lauren Tan (poteto), MIT.
