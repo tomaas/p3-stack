@@ -23,13 +23,13 @@ cd p3-stack
 
 ## Get started
 
-1. Run `/setup-p3`. It reads `orchestrator_capabilities` and writes `p3-models.md`, mapping each role (code, judgment, the review panels) to a provider and model you actually have.
+1. Run `/setup-p3`. It reads `orchestrator_capabilities` and writes `p3-models.md`, mapping each role (code, judgment, the review panels) to a provider and model you actually have. No role runs above xhigh, and outside a review panel the strongest model runs only when you name it or after two runs of the same brief fail their check. A rerun drops the lines of retired roles.
 2. Use `/p3-mode` whenever you want rigorous work. It reads the request, picks a playbook, and runs the other skills as the steps need them.
 3. Stuck or unsure which skill fits? Ask `/p3-help`.
 
 ## The mode
 
-`p3-mode` routes every task. Its playbooks: investigation, bug fix, perf issue, hillclimb, runtime forensics, trace forensics, feature, refactoring, prototype, visual parity, authoring a skill, eval, babysit, shipping, autonomous run, orchestrate, autopilot-full, autopilot-stack, session pickup, pause safely, multi-phase plan, worktree cleanup, opening a PR.
+`p3-mode` routes every task. Its twenty-two playbooks: investigation, bug fix, perf issue, hillclimb, runtime forensics, trace forensics, feature, refactoring, prototype, visual parity, authoring a skill, eval, babysit, shipping, autonomous run, autopilot-full, autopilot-stack, session pickup, pause safely, multi-phase plan, worktree cleanup, opening a PR.
 
 ## Skills
 
@@ -41,4 +41,4 @@ The twenty-four principle skills are indexed inside `p3-mode` and referenced by 
 
 ## Credit
 
-p3-stack adapts [pstack](https://github.com/cursor/plugins/tree/main/pstack) by [poteto](https://x.com/poteto). The skills, principles, and language are hers; the T3 Code rewiring is this repo's, started by Uzair Ansar. Synced with upstream [cursor/plugins](https://github.com/cursor/plugins) pstack at [`c742dd6`](https://github.com/cursor/plugins/tree/c742dd61706fbacc1b95f1a20b7b988cf096ce6c/pstack) (0.15.36) by Lauren Tan (poteto). MIT, see [LICENSE](LICENSE) and [NOTICE](NOTICE). Changes per sync are in [CHANGELOG.md](CHANGELOG.md).
+p3-stack adapts [pstack](https://github.com/cursor/plugins/tree/main/pstack) by [poteto](https://x.com/poteto). The skills, principles, and language are hers; the T3 Code rewiring is this repo's, started by Uzair Ansar. Synced with upstream [cursor/plugins](https://github.com/cursor/plugins) pstack at [`2f87c85`](https://github.com/cursor/plugins/tree/2f87c854fe3e2fcda44ca86b46ede35aad3c46b7/pstack) (0.15.43) by Lauren Tan (poteto). MIT, see [LICENSE](LICENSE) and [NOTICE](NOTICE). Changes per sync are in [CHANGELOG.md](CHANGELOG.md).
