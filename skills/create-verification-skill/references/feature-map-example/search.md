@@ -28,18 +28,18 @@ Preconditions:
 - **Toolbar entry.** Choose the `Search` button. Call `preview_click` with locator `role=button[name='Search']`. A dialog named `Search notes` appears with focus in its searchbox.
 - **Keyboard entry.** Close the dialog, focus the page, and press `/`. Call `preview_press` with key `/`. The same dialog appears and the page does not insert a slash.
 - **Title match.** Type `quarterly`. Call `preview_type` with locator `role=searchbox[name='Search notes']` and text `quarterly`. The `Search results` list contains `Quarterly plan` and does not contain `Grocery list`.
-- **Body match.** Replace the query with `budget`. Call `preview_type` with locator `role=searchbox[name='Search notes']` and text `budget`. The result `Quarterly plan` remains visible with a body-match excerpt.
+- **Body match.** Replace the query with `budget`. Call `preview_type` with locator `role=searchbox[name='Search notes']`, text `budget`, and `clear: true`. The result `Quarterly plan` remains visible with a body-match excerpt.
 - **Open result.** Choose `Quarterly plan`. Call `preview_click` with locator `role=link[name='Quarterly plan']`. The dialog closes and the editor heading reads `Quarterly plan`.
 - **Empty state.** Reopen search and enter `volcano`. Call `preview_type` with locator `role=searchbox[name='Search notes']` and text `volcano`. A status named `No matching notes` appears after search completes.
 - **Clear query.** Choose `Clear search`. Call `preview_click` with locator `role=button[name='Clear search']`. The searchbox is empty and the `Recent notes` region replaces the result list.
 - **CLI match.** Search from the terminal. Run `notes search "quarterly" --format json`. Exit code `0` and stdout contain one object whose title is `Quarterly plan`.
 - **CLI miss.** Search for an absent value. Run `notes search "volcano" --format json`. Exit code `0` and stdout are `[]`.
-- **Proof.** Capture the populated result state. Call `preview_snapshot` with `save: true`, write the returned snapshot text to `artifacts/search/results.aria.txt`, and keep the returned `screenshotPath`. Both artifacts identify Notes, the query, and `Quarterly plan`.
+- **Proof.** Capture the populated result state. Call `preview_snapshot` with `save: true`, write the returned snapshot text to `artifacts/search/results.aria.txt`, and keep the returned `screenshotPath`. The artifacts identify Notes, the query, and `Quarterly plan`.
 
 ## Gotchas
 
 - Pressing `/` while the editor or searchbox has focus inserts text instead of opening search.
-- Results update after a short debounce. Wait for the results list or empty status, not a fixed sleep.
+- Results update after a short debounce. Wait with `preview_wait_for` for the results list or empty status, not a fixed sleep.
 - Archived notes are excluded unless the user enables `Include archived`.
 - The CLI defaults to human-readable output. Use `--format json` for stable assertions.
 - Opening a result changes browser state. Reopen search before proving another query.
