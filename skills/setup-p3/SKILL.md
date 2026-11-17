@@ -16,51 +16,45 @@ Call `orchestrator_capabilities`. It lists the providers and models you can pass
 
 ### 2. Load current state
 
-The roles are the labels shown in step 5. If `p3-models.md` already exists at the chosen location, read it and treat its `# budget` line and its role values as the current choices. Otherwise start from the defaults in step 3(b). A line whose role is not in step 5, such as `how critics`, is from a retired role. Drop it.
+The roles are the labels shown in step 5. If `p3-models.md` already exists at the chosen location, read it and treat its `# budget` line and its role values as the current choices. Otherwise start from the defaults in step 3(b). A line whose role is not in step 5, such as `how critics`, `hardest tasks`, `architect runners`, `how explorer`, `how explainer`, `why investigators`, `why synthesizer`, `reflect tooling`, or `reflect judgment, divergent, synthesizer`, is from a retired role. Drop it.
+
+A file without the `# defaults: 3` line comes from an older setup. Before step 3, turn its `# budget: unlimited` line into `large`, because no role runs above `xhigh`. Every other value is the user's choice and stays, including every `inherit-parent` value. Tell the user which values you replaced.
 
 ### 3. Budget, map, and confirm
 
-**(a) Ask for a budget.** Ask plainly in the thread. Offer these four options with these exact labels, and name the current budget when the file records one.
+**(a) Ask for a budget.** Ask plainly in the thread. Offer these three options with these exact labels, and name the current budget when the file records one. With no file, say that `large` matches the skill defaults.
 
-- `unlimited — keep max`
 - `large — xhigh reasoning`
 - `medium — high reasoning`
 - `small — medium reasoning`
 
-**(b) Apply it.** Build the working table. On a fresh run, give code roles (`feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`) and the explorer, investigator, and swarm roles the fastest strong coding model detected. Give `judgment and prose`, `hardest tasks`, the explainer, the synthesizers, and `reflect tooling` the most capable model detected. Fill each panel role with one entry per distinct provider detected, up to three. On a re-run, keep any role the user changed.
+**(b) Apply it.** Build the working table. On a fresh run, give the code roles (`feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`) and `judgment and prose` the strong coding model you would run every day, not the strongest model detected: that one runs outside a panel only on the terms in the **p3-mode** skill's Subagents section. Give `swarm workers` the same model. Fill `arena runners` and `interrogate reviewers` with one entry per distinct provider detected, up to three, and `arena cross-judge pool` with one entry per distinct vendor, up to two. On a re-run, keep any role the user changed.
 
-When the catalog exposes reasoning options for a model, set each real entry's effort option from the budget: `unlimited` takes the highest option, and `large`, `medium`, and `small` take `xhigh`, `high`, or `medium`. The ladder is `max` > `xhigh` > `high` > `medium` > `low`. If the model does not expose the target, use the highest option at or below it, else mark the role as needing a choice. `inherit-parent` does not change. When the catalog exposes no reasoning options, map roles only and drop effort tokens; the budget label is still recorded.
+Each role has a target effort, which is its default's effort moved by the budget. The defaults are `xhigh` for the code roles and `judgment and prose`, and `high` for `swarm workers` and every panel entry. `large` keeps the default, `medium` lowers it one step, and `small` lowers it two steps, on the ladder `xhigh` > `high` > `medium` > `low`. No role runs above `xhigh`, and a target at the bottom of the ladder stays there. When the catalog exposes reasoning options for a model, set each real entry's effort option to its role's target, panel entries included. If the model does not expose the target, use the highest option at or below it, else mark the role as needing a choice. `inherit-parent` does not change. When the catalog exposes no reasoning options, map roles only and drop effort tokens; the budget label is still recorded.
 
-**(c) Show the roles and confirm.** Show every role with its model, marking any entry not in the detected set as needing a choice. Also list each line step 2 dropped. Ask whether to accept as-is or change specific roles, offering the detected models plus `inherit-parent` (the role runs on the parent thread's model, so omit the model in `delegate_task`) as the options. For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one `delegate_task` runs per entry, `inherit-parent` entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena runs one judge. It tries only values from a provider other than the parent's, in list order, so order it by preference. An `inherit-parent` value never judges. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
+**(c) Show the roles and confirm.** Show every role with its model, marking any entry not in the detected set as needing a choice. Also list each line step 2 dropped. Ask whether to accept as-is or change specific roles, offering the detected models at `xhigh` or below plus `inherit-parent` (the role runs on the parent thread's model, so omit the model in `delegate_task`) as the options. For panel roles (arena runners, interrogate reviewers) the value is a list, and one `delegate_task` runs per entry, `inherit-parent` entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena runs one judge. It tries only values from a vendor other than the parent's, in list order, so order it by preference. Two models from one vendor count as one vendor, even under different provider instances. An `inherit-parent` value never judges. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
 
 ### 4. Validate
 
-Every real entry written must be in the `orchestrator_capabilities` result, under the provider instance it came from. `inherit-parent` always passes. If a chosen entry is not available, stop and ask again.
+Every real entry written must be in the `orchestrator_capabilities` result, under the provider instance it came from, and at `xhigh` or below. `inherit-parent` always passes. If a chosen entry is not available, stop and ask again.
 
 ### 5. Write the file
 
-Write `p3-models.md` with a `# budget` line with the chosen label and its target effort, and one line per role, using the same labels p3-mode uses. Write each entry as `<providerInstanceId>/<model>`, followed by its effort option in parentheses when step 3(b) set one. Overwrite the whole file so re-runs stay idempotent. Shape:
+Write `p3-models.md` with the `# defaults: 3` line, a `# budget` line with the chosen label and the effort that label names, and one line per role, using the same labels p3-mode uses. Write each entry as `<providerInstanceId>/<model>`, followed by its effort option in parentheses when step 3(b) set one. Overwrite the whole file so re-runs stay idempotent. Shape:
 
 ```
 # p3 model configuration. One line per role. Delete a line to fall back to the skill default.
 # `inherit-parent` as a value: the role runs on the parent thread's model (omit the delegate_task model). Entries in a panel list still count toward its fan-out.
-# budget: unlimited (max)
+# defaults: 3
+# budget: large (xhigh)
 feature, refactoring: <providerInstanceId>/<model> (<effort>)
 bug-fix: <providerInstanceId>/<model> (<effort>)
 perf-issue: <providerInstanceId>/<model> (<effort>)
 hillclimb: <providerInstanceId>/<model> (<effort>)
 judgment and prose: <providerInstanceId>/<model> (<effort>)
-hardest tasks: <providerInstanceId>/<model> (<effort>)
-how explorer: <providerInstanceId>/<model> (<effort>)
-how explainer: <providerInstanceId>/<model> (<effort>)
-why investigators: <providerInstanceId>/<model> (<effort>)
-why synthesizer: <providerInstanceId>/<model> (<effort>)
-reflect tooling: <providerInstanceId>/<model> (<effort>)
-reflect judgment, divergent, synthesizer: <providerInstanceId>/<model> (<effort>)
 arena runners: <entry>, <entry>, <entry>
-arena cross-judge pool: <entry>, <entry>, <entry>
+arena cross-judge pool: <entry>, <entry>
 swarm workers: <providerInstanceId>/<model> (<effort>)
-architect runners: <entry>, <entry>, <entry>
 interrogate reviewers: <entry>, <entry>, <entry>
 ```
 

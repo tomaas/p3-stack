@@ -24,17 +24,20 @@ If you are a delegated worker, your brief names exactly one file. Write only tha
 | `control-ui`, `control-cli` (from cursor-team-kit) | `preview_*` browser tools and `device_*` simulator tools; `preview_recording_start`/`preview_recording_stop` and `device_screenshot` for evidence; `browser.preview` shows a file to the user. |
 | `~/.cursor/rules/pstack-models.mdc`, `/add-plugin` | `setup-p3` writes `p3-models.md`; install is a symlink of `skills/*` into `~/.agents/skills/` (see README). |
 | `poteto-mode`, `poteto-agent`, `poteto-help`, `setup-pstack` | `p3-mode`, `agents/p3-agent.md`, `p3-help`, `setup-p3`. |
+| A kickoff's first line pointing at `poteto-mode/worker.md` for a Task subagent or Project worker | The same first line, `Read <path>/worker.md before anything else.`, in every `delegate_task` or `t3_thread_launch` brief. |
 | Cursor custom modes ("press option+enter") | Skills are invoked by name (`/p3-mode`). No mode toggles. |
 
 Everything else in pstack transfers as written: the principles, the playbook shapes, the brief template, the reply style, the autonomy rules. Adopt it.
 
 ## Role names
 
-Code work reads its line in `p3-models.md`: `feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`. Prose and judgment read `judgment and prose`; the hardest changes read `hardest tasks`.
+Code work reads its line in `p3-models.md`: `feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`. Prose and judgment read `judgment and prose`. Trivial mechanical edits and verification read `swarm workers`.
 
-Panels and investigators: `how explorer`, `how explainer`, `why investigators`, `why synthesizer`, `arena runners`, `arena cross-judge pool`, `swarm workers`, `architect runners`, `interrogate reviewers`, `reflect tooling`, `reflect judgment, divergent, synthesizer`.
+Panels: `arena runners`, `arena cross-judge pool`, `interrogate reviewers`.
 
-Keep these names exactly.
+Keep these names exactly. Retired roles (`hardest tasks`, `architect runners`, `how explorer`, `how explainer`, `why investigators`, `why synthesizer`, `reflect tooling`, `reflect judgment, divergent, synthesizer`, `how critics`) appear only in `setup-p3`'s drop list.
+
+No role runs above xhigh. The strongest model runs outside a panel only when the user names it or after two runs of the same brief fail their check.
 
 ## Writing rules
 
@@ -48,7 +51,7 @@ Keep these names exactly.
 ## Layout
 
 - `skills/<name>/SKILL.md` is a skill. `skills/principle-*/SKILL.md` are the short principles.
-- `skills/p3-mode/SKILL.md` is the mode router; its playbooks live in `skills/p3-mode/playbooks/`.
+- `skills/p3-mode/SKILL.md` is the mode router; its playbooks live in `skills/p3-mode/playbooks/`, and `skills/p3-mode/worker.md` holds the rules every started agent reads first.
 - `agents/` holds prompt briefs for delegated roles (`p3-agent.md`, `comment-sicko.md`), not harness agent definitions.
 
 ## T3 tool quick reference
