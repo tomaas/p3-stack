@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-11-20: sync with pstack 0.15.46
+
+Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `0b46ec3` (0.15.46), by Lauren Tan (poteto), MIT. Covers 0.15.44 to 0.15.46.
+
+- **`/statechart` runs on native Windows** ([#1292](https://github.com/cursor/plugins/pull/1292)). The line readers split on `\r?\n`, so TLC's `\r\n` line ends no longer hide broken rules. The group kill and the janitor no longer use `/bin/sh` (new `scripts/kill.ts` and `scripts/janitor.ts`), the janitor spares a reused Windows pid after the worker exits, and java and mise start with `windowsHide`. A replay of every corpus case with Windows line ends guards the fix. `SKILL.md` says how to run `statechart.ts` with Node on native Windows. The `scripts/` changes are upstream's at `0b46ec3`, file by file; the T3 changes from earlier syncs stay (`package.json` name `@p3-stack/statechart`, `references/render.md` embedding by absolute path).
+- `NOTICE` and the README name the upstream commit `0b46ec3`.
+
+Not ported, because p3-stack has no counterpart:
+
+- The Gemini panel seat moving to Gemini 4 Neon, first at high (0.15.44, [#1283](https://github.com/cursor/plugins/pull/1283)) then at xhigh (0.15.45, [#1284](https://github.com/cursor/plugins/pull/1284)), in `arena`, `poteto-mode`, `setup-pstack`'s defaults and the README: roles resolve through `orchestrator_capabilities` and the fork names no model. The same holds for `setup-pstack`'s rewrite of old Gemini panel entries and the Neon seat's own budget target: they are slug rules. p3-mode keeps "no model runs above the top level it offers", which still covers a seat whose top level is xhigh.
+- `plugin.json` and `.cursor-plugin/plugin.json` version bumps to 0.15.44 through 0.15.46: no `plugin.json`.
+- `docs/harness/claude-code.md` and `harness/pstack` regeneration: p3-stack has no harness adapters and no generated harness tree.
+
 ## 2026-11-17: sync with pstack 0.15.43
 
 Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `2f87c85` (0.15.43), by Lauren Tan (poteto), MIT. Covers 0.15.37 to 0.15.43 (DEV-1951) and folds in DEV-1543.
