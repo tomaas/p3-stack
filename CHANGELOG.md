@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-11-24: sync with pstack 0.15.48
+
+Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `9e278fe` (0.15.48), by Lauren Tan (poteto), MIT. Covers 0.15.47 and 0.15.48.
+
+- **New `/reframe` skill** ([#1324](https://github.com/cursor/plugins/pull/1324), [#1326](https://github.com/cursor/plugins/pull/1326)). For when you can't name what you're building: it starts from your files and your own words, lists the two or three problems a vague description could be and picks the likeliest, gives 8 to 12 expert terms ranked by how much they'd change what you build, each with a real project whose link it checked, borrows terms from 2 or 3 neighboring fields and says where each analogy breaks, then rewrites your description with the new words. `skills/reframe/SKILL.md` is upstream's word for word; it names no Cursor mechanism. Runs only when you type `/reframe`.
+- `/p3-help` routes to `/reframe`, with upstream's row, after `/sharpen`. The README skill list adds `reframe`.
+- `NOTICE` and the README name the upstream commit `9e278fe`.
+
+Not ported, because p3-stack has no counterpart:
+
+- `plugin.json` and `.cursor-plugin/plugin.json` version bumps to 0.15.47 and 0.15.48: no `plugin.json`.
+- The `/reframe` paragraph in `docs/guide/02-poteto-mode.md`: p3-stack has no guide.
+
 ## 2026-11-20: sync with pstack 0.15.46
 
 Upstream: [cursor/plugins](https://github.com/cursor/plugins) pstack at `0b46ec3` (0.15.46), by Lauren Tan (poteto), MIT. Covers 0.15.44 to 0.15.46.
