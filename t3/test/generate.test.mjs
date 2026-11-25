@@ -72,6 +72,21 @@ describe("t3/generate.mjs", () => {
     assert.match(run.output, /FAIL T3 adapter has no row for watch-pr, used by poteto-mode/);
   });
 
+  for (const marker of ["~~~", "```"]) {
+    it(`fails when the only row sits in a ${marker} fence that holds a fence-like line indented four spaces`, () => {
+      const dir = copyRepo();
+      const path = join(dir, "docs/harness/t3.md");
+      const text = readFileSync(path, "utf8");
+      const row = text.split("\n").find((line) => line.startsWith("| `scripts/watch-pr/watch-pr` |"));
+      assert.ok(row);
+      const example = [`${marker}md`, `    ${marker}`, "| Cursor | T3 Code |", "| --- | --- |", row, marker].join("\n");
+      writeFileSync(path, `${text.replace(`${row}\n`, "")}\nAn example:\n\n${example}\n`);
+      const run = generate(dir, "--check");
+      assert.equal(run.status, 1);
+      assert.match(run.output, /FAIL T3 adapter has no row for watch-pr, used by poteto-mode/);
+    });
+  }
+
   it("fails when the T3 adapter has no update_state row", () => {
     const dir = copyRepo();
     const path = join(dir, "docs/harness/t3.md");

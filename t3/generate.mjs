@@ -213,7 +213,8 @@ for (const [skill, { usesCursorNames, wrap }] of classes) {
 function rowKeys(text) {
   let fence = null;
   const outside = text.split("\n").filter((line) => {
-    const marker = line.trim().match(/^(`{3,}|~{3,})(.*)$/);
+    // CommonMark: a fence has at most three leading spaces. A line indented four or more is content.
+    const marker = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
     if (fence) {
       if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = null;
       return false;
