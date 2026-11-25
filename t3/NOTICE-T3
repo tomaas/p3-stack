@@ -1,0 +1,13 @@
+pstack for T3 Code (branch pstack-t3 of tomaas/p3-stack)
+Copyright (c) 2026 Uzair Ansar (T3 Code adaptation)
+
+This branch carries pstack from https://github.com/cursor/plugins/tree/main/pstack,
+by Lauren Tan (poteto), licensed under the MIT License (see LICENSE). Every pstack
+file outside t3/, docs/harness/t3.md and harness/t3/ is upstream's, byte for byte.
+
+The T3 Code adaptation is the adapter docs/harness/t3.md, the generator, installer,
+checks and patches under t3/, and the generated tree harness/t3/. It continues the
+p3-stack adaptation started by Uzair Ansar, and is released under the same MIT License.
+
+Upstream base: cursor/plugins pstack at commit
+9e278fe4d4ecd8bfe98b1b79bf4be662efb338cc (pstack 0.15.48).

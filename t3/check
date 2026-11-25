@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Checks the pstack-t3 branch: the tree is fresh, upstream files are untouched, and the T3 tests pass.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+UPSTREAM_REF="${UPSTREAM_REF:-origin/upstream-pstack}"
+cd "$ROOT"
+
+node t3/generate.mjs --check
+
+if ! git rev-parse --verify --quiet "$UPSTREAM_REF^{commit}" >/dev/null; then
+  printf 'FAIL no %s ref: fetch it, or set UPSTREAM_REF to the upstream split you merged\n' "$UPSTREAM_REF"
+  exit 1
+fi
+upstream_paths=(skills agents docs/guide docs/harness/claude-code.md automations assets README.md LICENSE plugin.json .cursor-plugin .gitignore)
+changed="$(git diff --name-only "$UPSTREAM_REF" HEAD -- "${upstream_paths[@]}")"
+dirty="$(git status --porcelain -- "${upstream_paths[@]}")"
+if [[ -n "$changed$dirty" ]]; then
+  printf 'FAIL upstream files differ from %s. Put a local change in t3/patches instead:\n%s\n%s\n' "$UPSTREAM_REF" "$changed" "$dirty"
+  exit 1
+fi
+printf 'upstream files match %s\n' "$UPSTREAM_REF"
+
+node --test t3/test/
