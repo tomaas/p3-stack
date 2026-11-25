@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SKILLS = join(ROOT, "skills");
 const PATCHES = join(ROOT, "t3", "patches");
+const EXTRA = join(ROOT, "t3", "extra");
 const OUT = join(ROOT, "harness", "t3");
 const CLAUDE_ADAPTER = "docs/harness/claude-code.md";
 const T3_ADAPTER = "docs/harness/t3.md";
@@ -24,7 +25,7 @@ if (!/^[0-9a-f]{40}$/.test(UPSTREAM_COMMIT)) {
 }
 const README = `# pstack T3 Code tree
 
-This folder is generated from \`skills\`, \`agents\`, \`${GUIDE}\`, \`${CLAUDE_ADAPTER}\`, \`${T3_ADAPTER}\`, \`README.md\` and \`LICENSE\`, with the patches in \`t3/patches\`. Do not edit it by hand.
+This folder is generated from \`skills\`, \`agents\`, \`${GUIDE}\`, \`${CLAUDE_ADAPTER}\`, \`${T3_ADAPTER}\`, \`README.md\` and \`LICENSE\`, with the patches in \`t3/patches\` and the vendored skills in \`t3/extra\` (see \`t3/extra/SOURCES\`). Do not edit it by hand.
 
 \`t3/install.sh\` links \`skills/*\` from this folder into \`~/.claude/skills\` and \`~/.agents/skills\`. A relative link to a pstack file that the tree leaves out points at that file in cursor/plugins at the upstream base commit instead. Each one is listed below.
 
@@ -112,6 +113,30 @@ const sources = new Map(
   ),
 );
 
+// Extras: skills from other cursor/plugins plugins that pstack runs, vendored verbatim under t3/extra/<name>/ (see t3/extra/SOURCES).
+// Each renders to skills/<name>/ in the tree, and its plugin's license file next to the tree's LICENSE.
+const extras = [];
+if (existsSync(EXTRA)) {
+  for (const entry of readdirSync(EXTRA).sort()) {
+    const dir = join(EXTRA, entry);
+    if (!statSync(dir).isDirectory()) {
+      if (entry.startsWith("LICENSE-")) sources.set(entry, file(dir));
+      continue;
+    }
+    if (!existsSync(join(dir, "SKILL.md"))) {
+      fail(`t3/extra/${entry} has no SKILL.md`);
+      continue;
+    }
+    if (existsSync(join(SKILLS, entry))) {
+      fail(`t3/extra/${entry} has the name of an upstream skill, skills/${entry}`);
+      continue;
+    }
+    extras.push(entry);
+    for (const path of walk(dir)) sources.set(`skills/${entry}/${relative(dir, path)}`, file(path));
+  }
+}
+stopOnProblems();
+
 // A patch is a header saying why, then a unified diff of one upstream file (`--- a/<path>`, `+++ b/<path>`).
 // Every hunk must match the upstream text exactly at its line, so a patch that drifts fails instead of fuzzing.
 function applyPatch(name, patch) {
@@ -176,7 +201,7 @@ if (existsSync(PATCHES)) {
 }
 stopOnProblems();
 
-const skills = readdirSync(SKILLS).filter((name) => existsSync(join(SKILLS, name, "SKILL.md")));
+const skills = [...readdirSync(SKILLS).filter((name) => existsSync(join(SKILLS, name, "SKILL.md"))), ...extras];
 
 function textOf(path) {
   return sources.get(path).bytes.toString("utf8");
@@ -306,7 +331,7 @@ if (process.argv.includes("--check")) {
     console.log(`${out} is out of date. Run \`${COMMAND}\` and commit the result.`);
     process.exit(1);
   }
-  console.log(`${out} is up to date. ${skills.length} skills, ${patched.length} patches.`);
+  console.log(`${out} is up to date. ${skills.length} skills, ${patched.length} patches, ${extras.length} extras.`);
 } else {
   rmSync(OUT, { recursive: true, force: true });
   for (const [path, { bytes, executable }] of rendered) {
@@ -315,6 +340,6 @@ if (process.argv.includes("--check")) {
     chmodSync(join(OUT, path), executable ? 0o755 : 0o644);
   }
   const wrapped = [...classes.values()].filter(({ wrap }) => wrap).length;
-  console.log(`${skills.length} skills, ${wrapped} SKILL.md files with the adapter line, ${patched.length} patches`);
+  console.log(`${skills.length} skills, ${wrapped} SKILL.md files with the adapter line, ${patched.length} patches, ${extras.length} extras`);
   for (const line of patched) console.log(`  patched ${line}`);
 }

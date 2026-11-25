@@ -10,8 +10,9 @@ The skills keep upstream's names and text: `/poteto-mode`, `/poteto-help`, `/set
 | --- | --- |
 | `skills/`, `agents/`, `docs/guide/`, `docs/harness/claude-code.md`, `README.md`, `LICENSE`, the rest | Upstream's files. Never edit them here. |
 | `docs/harness/t3.md` | The T3 adapter. A session reads the Claude Code adapter, then this one, which wins where they differ. |
-| `t3/generate.mjs` | Renders `harness/t3/` from upstream's files, the two adapters and `t3/patches`. |
+| `t3/generate.mjs` | Renders `harness/t3/` from upstream's files, the two adapters, `t3/patches` and `t3/extra`. |
 | `t3/patches/` | Local changes, applied to the generated tree only. |
+| `t3/extra/` | Skills from other cursor/plugins plugins that pstack calls, vendored verbatim and rendered into `harness/t3/skills/`. |
 | `harness/t3/` | The generated tree that `t3/install.sh` installs. Committed. Never edit it by hand. |
 | `t3/install.sh` | Links `harness/t3/skills/*` into the folders T3 sessions read. |
 | `t3/check`, `t3/test/` | The checks. |
@@ -41,7 +42,7 @@ Then run `/setup-pstack` once. In T3 it writes `~/.claude/rules/pstack-models.md
 3. Here, on `pstack-t3`: `git fetch origin && git merge origin/upstream-pstack`.
 4. `node t3/generate.mjs`. A failure names what to fix: a patch whose context changed upstream, or a new Cursor name that needs a row in `docs/harness/t3.md`. Rework the patch or add the row, never an upstream file.
 5. `t3/check`. It runs the generator in `--check` mode, proves the upstream files match `origin/upstream-pstack` (set `UPSTREAM_REF` for another ref), and runs `t3/test`.
-6. Write the cursor/plugins commit you split from into `t3/UPSTREAM` and `t3/NOTICE-T3`, rerun `node t3/generate.mjs`, and commit.
+6. Write the cursor/plugins commit you split from into `t3/UPSTREAM` and `t3/NOTICE-T3`, refresh the extras (see Extras), rerun `node t3/generate.mjs`, and commit.
 
 ## Patches
 
@@ -53,6 +54,16 @@ Each patch is a header saying why, then a unified diff of one upstream file. The
 | `02-statechart-render-absolute-path.patch` | `skills/statechart/references/render.md` | T3 shows an image in the thread only when the reply embeds it by absolute path. |
 
 `statechart`'s `scripts/package.json` keeps upstream's package name. Nothing reads the name, and the package tests pass under it.
+
+## Extras
+
+pstack calls a few skills that ship in other cursor/plugins plugins. An extra is one of them, copied byte for byte into `t3/extra/<name>/`. The generator renders it into `harness/t3/skills/<name>/` like an upstream skill, with the same name and folder checks. It fails when an extra has the name of an upstream skill. The plugin's license ships as `t3/extra/LICENSE-<plugin>` and lands next to the tree's `LICENSE`. `t3/extra/SOURCES` records the cursor/plugins commit each extra came from.
+
+| Extra | From | Why |
+| --- | --- | --- |
+| `deslop` | cursor/plugins `cursor-team-kit/skills/deslop` (MIT, Cursor), at the commit in `t3/extra/SOURCES` | poteto-mode runs `/deslop` before every commit, and T3 has no `cursor-team-kit`. |
+
+To refresh on a sync, in the cursor/plugins clone: `git show origin/main:cursor-team-kit/skills/deslop/SKILL.md > <this repo>/t3/extra/deslop/SKILL.md` and `git show origin/main:cursor-team-kit/LICENSE > <this repo>/t3/extra/LICENSE-cursor-team-kit`. Write `origin/main`'s sha into `t3/extra/SOURCES`, then run `node t3/generate.mjs` and `t3/check`.
 
 ## Credit
 

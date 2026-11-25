@@ -159,6 +159,41 @@ describe("t3/generate.mjs", () => {
     assert.match(run.output, /has no header saying why/);
   });
 
+  it("renders each extra byte for byte into the tree, with its plugin's license", () => {
+    const dir = copyRepo();
+    assert.ok(readFileSync(join(dir, "harness/t3/skills/deslop/SKILL.md")).equals(readFileSync(join(dir, "t3/extra/deslop/SKILL.md"))));
+    assert.ok(readFileSync(join(dir, "harness/t3/LICENSE-cursor-team-kit")).equals(readFileSync(join(dir, "t3/extra/LICENSE-cursor-team-kit"))));
+    assert.match(readFileSync(join(dir, "t3/extra/SOURCES"), "utf8"), /^deslop <- cursor\/plugins [0-9a-f]{40}:cursor-team-kit\/skills\/deslop$/m);
+  });
+
+  it("fails --check when an extra changed and the tree was not regenerated", () => {
+    const dir = copyRepo();
+    const path = join(dir, "t3/extra/deslop/SKILL.md");
+    writeFileSync(path, `${readFileSync(path, "utf8")}\nOne more rule.\n`);
+    const run = generate(dir, "--check");
+    assert.equal(run.status, 1);
+    assert.match(run.output, /harness\/t3\/skills\/deslop\/SKILL\.md/);
+    assert.match(run.output, /out of date/);
+  });
+
+  it("fails when an extra has the name of an upstream skill", () => {
+    const dir = copyRepo();
+    mkdirSync(join(dir, "t3/extra/how"), { recursive: true });
+    writeFileSync(join(dir, "t3/extra/how/SKILL.md"), "---\nname: how\ndescription: a clash\n---\n\n# How\n");
+    const run = generate(dir, "--check");
+    assert.equal(run.status, 1);
+    assert.match(run.output, /FAIL t3\/extra\/how has the name of an upstream skill, skills\/how/);
+  });
+
+  it("fails when an extra's name is not its folder name", () => {
+    const dir = copyRepo();
+    mkdirSync(join(dir, "t3/extra/tidy"), { recursive: true });
+    writeFileSync(join(dir, "t3/extra/tidy/SKILL.md"), "---\nname: tidy-up\ndescription: a mismatch\n---\n\n# Tidy\n");
+    const run = generate(dir, "--check");
+    assert.equal(run.status, 1);
+    assert.match(run.output, /FAIL skills\/tidy\/SKILL\.md has name "tidy-up", not its folder name tidy/);
+  });
+
   it("regenerates the same bytes", () => {
     const dir = copyRepo();
     assert.equal(generate(dir).status, 0);
