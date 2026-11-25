@@ -209,10 +209,22 @@ for (const [skill, { usesCursorNames, wrap }] of classes) {
   if (name !== skill) fail(`skills/${skill}/SKILL.md has name ${JSON.stringify(name ?? "")}, not its folder name ${skill}`);
   if (!SKILL_NAME.test(skill) || skill.length > 64) fail(`skills/${skill} is not lowercase words joined by hyphens, at most 64 characters`);
 }
-// The first cells of an adapter's mapping rows. Prose, headings and the other cells never count as a row.
+// The first cells of an adapter's mapping rows. Prose, headings, fenced code and the other cells never count as a row.
 function rowKeys(text) {
-  return text
-    .split("\n")
+  let fence = null;
+  const outside = text.split("\n").filter((line) => {
+    const marker = line.trim().match(/^(`{3,}|~{3,})(.*)$/);
+    if (fence) {
+      if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = null;
+      return false;
+    }
+    if (marker) {
+      fence = marker[1];
+      return false;
+    }
+    return true;
+  });
+  return outside
     .filter((line) => line.startsWith("|") && !/^\|\s*-{3}/.test(line))
     .map((line) => line.split("|")[1].trim())
     .filter((cell) => cell !== "Cursor");
