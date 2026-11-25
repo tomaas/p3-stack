@@ -1,7 +1,8 @@
 Why: t3/install.sh installs each skill as a symlink into the pstack-t3 checkout, so upstream's
 "copy the skill folder there" would copy a link, and an edit through the link lands in the shared
 checkout. This replaces upstream's last paragraph with the safe symlink-to-copy steps from the old
-fork (DEV-1181), pointed at the two folders t3/install.sh links. Generated tree only.
+fork (DEV-1181), pointed at the two folders t3/install.sh links, and keeps upstream's rule against
+editing a skill under plugins/cache/. Generated tree only.
 
 --- a/skills/reflect/SKILL.md
 +++ b/skills/reflect/SKILL.md
@@ -10,7 +11,7 @@ fork (DEV-1181), pointed at the two folders t3/install.sh links. Generated tree 
  Present Accepted (problem, proposal, skill), Rejected (reason) and Backlog, and wait for approval before editing any skill.
  
 -Never edit a skill under `plugins/cache/`. Before approval, show its destination, `.cursor/skills/<skill>/` or `~/.cursor/skills/<skill>/`. After approval, copy the skill folder there and edit the copy. Never open a PR or push.
-+Never edit a skill through its link into the pstack-t3 checkout. `t3/install.sh` links each skill there, so an edit lands in the shared checkout and reaches every session and project that uses the install. Before approval, show its destination, the skills folder this session loads the skill from: `.claude/skills/<skill>` in the project or `~/.claude/skills/<skill>` in Claude Code, `.agents/skills/<skill>` or `~/.agents/skills/<skill>` in Codex. Say the copy will be detached: it stops updating with the checkout (`t3/install.sh` prints `keep <skill>` for it), the other skills folder keeps its link, and deleting the copy and rerunning `t3/install.sh` restores the linked skill.
++Never edit a skill under `plugins/cache/`, and never edit a skill through its link into the pstack-t3 checkout. `t3/install.sh` links each skill there, so an edit lands in the shared checkout and reaches every session and project that uses the install. Before approval, show its destination, the skills folder this session loads the skill from: `.claude/skills/<skill>` in the project or `~/.claude/skills/<skill>` in Claude Code, `.agents/skills/<skill>` or `~/.agents/skills/<skill>` in Codex. Say the copy will be detached: it stops updating with the checkout (`t3/install.sh` prints `keep <skill>` for it), the other skills folder keeps its link, and deleting the copy and rerunning `t3/install.sh` restores the linked skill.
 +
 +After approval, `<dest>` is that destination, written as an absolute path with no trailing slash. `rm -r` on a link with a trailing slash deletes files inside the checkout, and `cp -r` of a link copies the link. Never `cp -r` the link itself: copy from the real folder. Quote every path, as below, because a path can hold spaces. Pick the case by what `<dest>` is now:
 +

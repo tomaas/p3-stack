@@ -16,16 +16,22 @@ const GUIDE = "docs/guide";
 const COMMAND = "node t3/generate.mjs";
 const GITHUB = "https://github.com/cursor/plugins";
 const LINK = /\]\(([^)\s]+)\)/g;
+// The cursor/plugins commit that upstream-pstack was split from. A sync updates t3/UPSTREAM.
+const UPSTREAM_COMMIT = readFileSync(join(ROOT, "t3", "UPSTREAM"), "utf8").trim();
+if (!/^[0-9a-f]{40}$/.test(UPSTREAM_COMMIT)) {
+  console.log("FAIL t3/UPSTREAM must hold the full 40-character cursor/plugins commit sha");
+  process.exit(1);
+}
 const README = `# pstack T3 Code tree
 
 This folder is generated from \`skills\`, \`agents\`, \`${GUIDE}\`, \`${CLAUDE_ADAPTER}\`, \`${T3_ADAPTER}\`, \`README.md\` and \`LICENSE\`, with the patches in \`t3/patches\`. Do not edit it by hand.
 
-\`t3/install.sh\` links \`skills/*\` from this folder into \`~/.claude/skills\` and \`~/.agents/skills\`. A relative link to a pstack file that the tree leaves out points at that file on GitHub \`main\` instead.
+\`t3/install.sh\` links \`skills/*\` from this folder into \`~/.claude/skills\` and \`~/.agents/skills\`. A relative link to a pstack file that the tree leaves out points at that file in cursor/plugins at the upstream base commit instead. Each one is listed below.
 
 After editing those sources or a patch, run \`${COMMAND}\` from the repository root and commit the result.
 `;
 
-// Upstream's TERMS, verbatim. Each key needs a row in either adapter.
+// Upstream's TERMS. Each key needs a table row whose first cell holds it, in either adapter.
 const UPSTREAM_TERMS = [
   { key: "`Task`", re: /`Task`|\bTask (tool|subagent|call)/ },
   { key: "`AskQuestion`", re: /AskQuestion/ },
@@ -48,9 +54,13 @@ const UPSTREAM_TERMS = [
   { key: "~/.cursor/plugins/", re: /\.cursor\/plugins|\.cursor-plugin/ },
   { key: ".cursor/rules/", re: /\.cursor\/rules|always-applied rule/ },
   { key: "agent-transcripts", re: /agent-transcripts|\.cursor\/projects/ },
-  { key: "Cursor-only features", re: /Bugbot|Cursor [Aa]utomation|cursor\.(sh|com)\/automations|[Cc]loud [Aa]gent|built-in PR tool/ },
+  // Upstream has one "Cursor-only features" key, which its section heading satisfies. Here each feature needs its own row.
+  { key: "Bugbot", re: /Bugbot/ },
+  { key: "Cursor Automations", re: /Cursor [Aa]utomation|cursor\.(sh|com)\/automations/ },
+  { key: "cloud agents", re: /[Cc]loud [Aa]gent/ },
+  { key: "built-in PR tool", re: /built-in PR tool/ },
 ];
-// Cursor names that the Claude Code adapter leaves alone and T3 Code maps. Each key needs a row in the T3 adapter.
+// Cursor names that the Claude Code adapter leaves alone and T3 Code maps. Each key needs a row in the T3 adapter whose first cell holds it.
 const T3_TERMS = [
   { key: "`/loop`", re: /\/loop\b/ },
   { key: "watch-pr", re: /watch-pr/ },
@@ -65,6 +75,8 @@ const T3_TERMS = [
   { key: "`subagent_type`", re: /subagent_type/ },
   { key: "The active transcript", re: /\btranscript\b/ },
   { key: "SendToUser", re: /SendToUser/ },
+  { key: "update_state", re: /update_state/ },
+  { key: ".cursor/worktrees", re: /\.cursor\/worktrees|Application Support\/Cursor/ },
 ];
 const ROUTE_KEY = "Run another pstack skill";
 const SKILL_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -197,13 +209,22 @@ for (const [skill, { usesCursorNames, wrap }] of classes) {
   if (name !== skill) fail(`skills/${skill}/SKILL.md has name ${JSON.stringify(name ?? "")}, not its folder name ${skill}`);
   if (!SKILL_NAME.test(skill) || skill.length > 64) fail(`skills/${skill} is not lowercase words joined by hyphens, at most 64 characters`);
 }
-const claudeAdapter = textOf(CLAUDE_ADAPTER);
-const t3Adapter = textOf(T3_ADAPTER);
+// The first cells of an adapter's mapping rows. Prose, headings and the other cells never count as a row.
+function rowKeys(text) {
+  return text
+    .split("\n")
+    .filter((line) => line.startsWith("|") && !/^\|\s*-{3}/.test(line))
+    .map((line) => line.split("|")[1].trim())
+    .filter((cell) => cell !== "Cursor");
+}
+const claudeRows = rowKeys(textOf(CLAUDE_ADAPTER));
+const t3Rows = rowKeys(textOf(T3_ADAPTER));
+const hasRow = (rows, key) => rows.some((cell) => cell.includes(key));
 const t3Keys = new Set(T3_TERMS.map(({ key }) => key));
 for (const [key, using] of users) {
   if (t3Keys.has(key)) {
-    if (!t3Adapter.includes(key)) fail(`T3 adapter has no row for ${key}, used by ${using.join(", ")}`);
-  } else if (!claudeAdapter.includes(key) && !t3Adapter.includes(key)) {
+    if (!hasRow(t3Rows, key)) fail(`T3 adapter has no row for ${key}, used by ${using.join(", ")}`);
+  } else if (!hasRow(claudeRows, key) && !hasRow(t3Rows, key)) {
     fail(`neither adapter has a row for ${key}, used by ${using.join(", ")}`);
   }
 }
@@ -225,6 +246,8 @@ for (const [skill, { wrap }] of classes) {
   const entry = sources.get(`skills/${skill}/SKILL.md`);
   if (wrap) entry.bytes = Buffer.from(entry.bytes.toString("utf8").replace(/^(# .*)\n+/m, `$1\n\n${LINE}\n\n`));
 }
+// A relative link to an upstream file the tree leaves out points at that file in cursor/plugins at the upstream base commit.
+const rewritten = [];
 for (const [path, entry] of sources) {
   if (!path.endsWith(".md")) continue;
   const text = entry.bytes.toString("utf8").replace(LINK, (link, href) => {
@@ -232,13 +255,22 @@ for (const [path, entry] of sources) {
     if (!target || target.split("/")[0] === ".." || has(sources, target)) return link;
     if (target.startsWith("t3/") || target.startsWith("harness/")) return link;
     const kind = statSync(join(ROOT, target)).isDirectory() ? "tree" : "blob";
-    return `](${GITHUB}/${kind}/main/pstack/${target}${href.slice(href.search(/[#?]|$/))})`;
+    const url = `${GITHUB}/${kind}/${UPSTREAM_COMMIT}/pstack/${target}${href.slice(href.search(/[#?]|$/))}`;
+    rewritten.push(`- \`${path}\`: \`${href}\` -> ${url}`);
+    return `](${url})`;
   });
   entry.bytes = Buffer.from(text);
 }
 
 // t3/install.sh installs only the tree, so a relative link that works from the repository root has to work inside it too.
-const rendered = new Map([["GENERATED.md", { bytes: Buffer.from(README), executable: false }]]);
+const generated = `${README}
+Upstream base: cursor/plugins \`${UPSTREAM_COMMIT}\` (from \`t3/UPSTREAM\`).
+
+## Rewritten links
+
+${rewritten.length > 0 ? rewritten.join("\n") : "None."}
+`;
+const rendered = new Map([["GENERATED.md", { bytes: Buffer.from(generated), executable: false }]]);
 for (const [path, entry] of sources) {
   rendered.set(path, entry);
   if (!path.endsWith(".md")) continue;

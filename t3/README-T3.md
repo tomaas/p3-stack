@@ -16,7 +16,7 @@ The skills keep upstream's names and text: `/poteto-mode`, `/poteto-help`, `/set
 | `t3/install.sh` | Links `harness/t3/skills/*` into the folders T3 sessions read. |
 | `t3/check`, `t3/test/` | The checks. |
 
-Every skill that uses a Cursor name gets one line under its H1: read the Claude Code adapter, then the T3 adapter, once per session. `node t3/generate.mjs --check` fails when the tree is stale, when a patch no longer applies, or when a Cursor name a skill uses has no row in either adapter. The T3 names (`/loop`, `watch-pr`, `cursor-team-kit`, `worker.md` and the others in `T3_TERMS`) need a row in `docs/harness/t3.md`.
+Every skill that uses a Cursor name gets one line under its H1: read the Claude Code adapter, then the T3 adapter, once per session. `node t3/generate.mjs --check` fails when the tree is stale, when a patch no longer applies, or when a Cursor name a skill uses has no row in either adapter. A row counts only when the name sits in its first cell; prose and headings never count. The T3 names (`/loop`, `watch-pr`, `cursor-team-kit`, `worker.md`, `update_state` and the others in `T3_TERMS`) need a row in `docs/harness/t3.md`. A relative link to an upstream file the tree leaves out (such as `automations/`) is rewritten to cursor/plugins at the commit in `t3/UPSTREAM`, and `harness/t3/GENERATED.md` lists each one.
 
 ## Install
 
@@ -41,7 +41,7 @@ Then run `/setup-pstack` once. In T3 it writes `~/.claude/rules/pstack-models.md
 3. Here, on `pstack-t3`: `git fetch origin && git merge origin/upstream-pstack`.
 4. `node t3/generate.mjs`. A failure names what to fix: a patch whose context changed upstream, or a new Cursor name that needs a row in `docs/harness/t3.md`. Rework the patch or add the row, never an upstream file.
 5. `t3/check`. It runs the generator in `--check` mode, proves the upstream files match `origin/upstream-pstack` (set `UPSTREAM_REF` for another ref), and runs `t3/test`.
-6. Update the upstream commit in `t3/NOTICE-T3`, and commit.
+6. Write the cursor/plugins commit you split from into `t3/UPSTREAM` and `t3/NOTICE-T3`, rerun `node t3/generate.mjs`, and commit.
 
 ## Patches
 
@@ -49,7 +49,7 @@ Each patch is a header saying why, then a unified diff of one upstream file. The
 
 | Patch | File | Why |
 | --- | --- | --- |
-| `01-reflect-copy-linked-skill.patch` | `skills/reflect/SKILL.md` | The install links skills into this checkout, so editing a skill through its link changes the shared checkout. The patch replaces upstream's last paragraph with the safe steps to copy a linked skill out before editing it. |
+| `01-reflect-copy-linked-skill.patch` | `skills/reflect/SKILL.md` | The install links skills into this checkout, so editing a skill through its link changes the shared checkout. The patch replaces upstream's last paragraph with the safe steps to copy a linked skill out before editing it, and keeps upstream's rule against editing a skill under `plugins/cache/`. |
 | `02-statechart-render-absolute-path.patch` | `skills/statechart/references/render.md` | T3 shows an image in the thread only when the reply embeds it by absolute path. |
 
 `statechart`'s `scripts/package.json` keeps upstream's package name. Nothing reads the name, and the package tests pass under it.
